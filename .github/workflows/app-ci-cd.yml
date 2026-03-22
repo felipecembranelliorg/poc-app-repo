@@ -46,8 +46,6 @@ jobs:
     name: deploy-stage
     if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
     needs: mandatory_ci
-    environment:
-      name: staging
     uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
     with:
       environment_name: staging
@@ -62,8 +60,6 @@ jobs:
     name: deploy-prod
     if: github.event_name == 'push' && github.ref == 'refs/heads/production'
     needs: mandatory_ci
-    environment:
-      name: production
     uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
     with:
       environment_name: production
