@@ -2,24 +2,17 @@ name: App CI CD
 
 on:
   workflow_dispatch:
-  workflow_call:
-    inputs:
-      config-path:
-        required: true
-        type: string
-    secrets:
-      personal_access_token:
-        required: true
+ 
   pull_request:
     branches:
-      - dev
-      - stage
-      - production
+      - DEV
+      - STG
+      - main
   push:
     branches:
-      - dev
-      - stage
-      - production
+      - DEV
+      - STG
+      - main
 
 permissions:
   contents: read
@@ -48,33 +41,34 @@ jobs:
       docker_image_name: 'myapp-api'
     secrets: inherit
 
-  # deploy_dev:
-  #   name: deploy-dev
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
-  #   needs: mandatory_ci
-  #   uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
-  #   with:
-  #     environment_name: dev
-  #     aks_cluster_name: aks-dev-01
-  #     aks_resource_group: rg-dev-platform
-  #     aks_namespace: myapp-dev
-  #     docker_image_name: myapp-api
-  #     kubernetes_manifest_path: ./k8s/deployment.yaml
-  #   secrets: inherit
+  deploy_dev:
+    name: deploy-dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/DEV'
+    needs: mandatory_ci
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@master
+    with:
+      environment_name: DEV
+      aks_cluster_name: aks-dev-01
+      aks_resource_group: rg-dev-platform
+      aks_namespace: myapp-dev
+      docker_image_name: myapp-api
+      kubernetes_manifest_path: ./k8s/deployment.yaml
+    secrets: inherit
 
-  # deploy_stage:
-  #   name: deploy-stage
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
-  #   needs: mandatory_ci
-  #   uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
-  #   with:
-  #     environment_name: staging
-  #     aks_cluster_name: aks-stage-01
-  #     aks_resource_group: rg-stage-platform
-  #     aks_namespace: myapp-stage
-  #     docker_image_name: myapp-api
-  #     kubernetes_manifest_path: ./k8s/deployment.yaml
-  #   secrets: inherit
+
+  deploy_stage:
+    name: deploy-stage
+    if: github.event_name == 'push' && github.ref == 'refs/heads/STG'
+    needs: mandatory_ci
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@master
+    with:
+      environment_name: STG
+      aks_cluster_name: aks-stage-01
+      aks_resource_group: rg-stage-platform
+      aks_namespace: myapp-stage
+      docker_image_name: myapp-api
+      kubernetes_manifest_path: ./k8s/deployment.yaml
+    secrets: inherit
 
   # deploy_prod:
   #   name: deploy-prod
