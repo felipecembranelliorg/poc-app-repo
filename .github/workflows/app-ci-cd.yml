@@ -28,7 +28,7 @@ jobs:
           echo "[DUMMY] Event: ${{ github.event_name }}"
           echo "[DUMMY] Ref: ${{ github.ref }}"
 
-  # mandatory_ci:
+  mandatory_ci:
     name: mandatory-ci
     needs: dummy_ping
     uses: felipecembranelliorg/platform-devops-poc/.github/workflows/dotnet-ci.yml@main
