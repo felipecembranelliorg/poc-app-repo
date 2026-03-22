@@ -56,19 +56,19 @@ jobs:
     secrets: inherit
 
 
-  # deploy_stage:
-  #   name: deploy-stage
-  #   if: github.event_name == 'push' && github.ref == 'refs/heads/STG'
-  #   needs: mandatory_ci
-  #   uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
-  #   with:
-  #     environment_name: STG
-  #     aks_cluster_name: aks-stage-01
-  #     aks_resource_group: rg-stage-platform
-  #     aks_namespace: myapp-stage
-  #     docker_image_name: myapp-api
-  #     kubernetes_manifest_path: ./k8s/deployment.yaml
-  #   secrets: inherit
+  deploy_stage:
+    name: deploy-stage
+    if: github.event_name == 'push' && github.ref == 'refs/heads/STG'
+    needs: mandatory_ci
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@master
+    with:
+      environment_name: STG
+      aks_cluster_name: aks-stage-01
+      aks_resource_group: rg-stage-platform
+      aks_namespace: myapp-stage
+      docker_image_name: myapp-api
+      kubernetes_manifest_path: ./k8s/deployment.yaml
+    secrets: inherit
 
   # deploy_prod:
   #   name: deploy-prod
