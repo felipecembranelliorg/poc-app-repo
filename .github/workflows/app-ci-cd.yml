@@ -31,7 +31,7 @@ jobs:
   mandatory_ci:
     name: mandatory-ci
     needs: dummy_ping
-    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/dotnet-ci.yml@main
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/dotnet-ci.yml@master
     with:
       dotnet_version: '9.0.x'
       solution_path: './src/MyApp.sln'
