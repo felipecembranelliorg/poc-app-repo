@@ -1,0 +1,57 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev/**'
+      - 'release*'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'dev/**'
+      - 'release*'
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Choose target environment'
+        required: true
+        type: environment
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  dummy_ping:
+    name: dummy-ping
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    steps:
+      - name: Echo workflow execution
+        env:
+          GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
+          TARGET_ENVIRONMENT: ${{ github.event.inputs.target_environment }}
+          url: ${{ secrets.GIT_HUB_URL_1 }}
+          url2: ${{ secrets.GIT_HUB_URL_2 }}
+        run: |
+          echo "[DUMMY] Workflow is running"
+          echo "[DUMMY] Event: ${{ github.event_name }}"
+          echo "[DUMMY] Ref: ${{ github.ref }}"
+          echo "[DUMMY] Selected environment: ${TARGET_ENVIRONMENT:-<not provided>}"
+          echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
+          echo "[DUMMY] URL: ${url:-<not set>}"
+          echo "[DUMMY] URL2: ${url2:-<not set>}"
+
+  mandatory_ci:
+    name: mandatory-ci
+    needs: dummy_ping
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/dotnet-ci.yml@master
+    with:
+      dotnet_version: '9.0.x'
+      solution_path: './src/MyApp.sln'
+      run_tests: true
+      build_configuration: 'Release'
+      docker_image_name: 'myapp-api'
+    secrets: inherit

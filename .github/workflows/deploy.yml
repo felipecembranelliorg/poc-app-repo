@@ -1,0 +1,101 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev/**'
+      - 'release*'
+      - feature/*
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'dev/**'
+      - 'release*'
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Choose target environment'
+        required: true
+        type: environment
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  dummy_ping:
+    name: dummy-ping
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    steps:
+      - name: Echo workflow execution
+        env:
+          GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
+          TARGET_ENVIRONMENT: ${{ github.event.inputs.target_environment }}
+          url: ${{ secrets.GIT_HUB_URL_1 }}
+          url2: ${{ secrets.GIT_HUB_URL_2 }}
+        run: |
+          echo "[DUMMY] Workflow is running"
+          echo "[DUMMY] Event: ${{ github.event_name }}"
+          echo "[DUMMY] Ref: ${{ github.ref }}"
+          echo "[DUMMY] Selected environment: ${TARGET_ENVIRONMENT:-<not provided>}"
+          echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
+          echo "[DUMMY] URL: ${url:-<not set>}"
+          echo "[DUMMY] URL2: ${url2:-<not set>}"
+
+  mandatory_ci:
+    name: mandatory-ci
+    needs: dummy_ping
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/dotnet-ci.yml@master
+    with:
+      dotnet_version: '9.0.x'
+      solution_path: './src/MyApp.sln'
+      run_tests: true
+      build_configuration: 'Release'
+      docker_image_name: 'myapp-api'
+    secrets: inherit
+
+  deploy_dev:
+    name: deploy-dev
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    needs: mandatory_ci
+    uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@master
+    with:
+      environment_name: DEV
+      aks_cluster_name: aks-dev-01
+      aks_resource_group: rg-dev-platform
+      aks_namespace: myapp-dev
+      docker_image_name: myapp-api
+      kubernetes_manifest_path: ./k8s/deployment.yaml
+    secrets: inherit
+
+
+  # deploy_stage:
+  #   name: deploy-stage
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/stage'
+  #   needs: mandatory_ci
+  #   uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
+  #   with:
+  #     environment_name: STG
+  #     aks_cluster_name: aks-stage-01
+  #     aks_resource_group: rg-stage-platform
+  #     aks_namespace: myapp-stage
+  #     docker_image_name: myapp-api
+  #     kubernetes_manifest_path: ./k8s/deployment.yaml
+  #   secrets: inherit
+
+  # deploy_prod:
+  #   name: deploy-prod
+  #   if: github.event_name == 'push' && github.ref == 'refs/heads/production'
+  #   needs: mandatory_ci
+  #   uses: felipecembranelliorg/platform-devops-poc/.github/workflows/aks-deploy.yml@v1
+  #   with:
+  #     environment_name: production
+  #     aks_cluster_name: aks-prod-01
+  #     aks_resource_group: rg-prod-platform
+  #     aks_namespace: myapp-prod
+  #     docker_image_name: myapp-api
+  #     kubernetes_manifest_path: ./k8s/deployment.yaml
+  #   secrets: inherit
