@@ -27,13 +27,14 @@ jobs:
   dummy_ping:
     name: dummy-ping
     runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
     steps:
       - name: Echo workflow execution
         env:
           GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
           TARGET_ENVIRONMENT: ${{ github.event.inputs.target_environment }}
-          url: https://myapp-dev.example.com # Example URL, replace with actual if needed
-          url2: https://myapp-dev.example.com # Example URL, replace with actual if needed
+          url: ${{ secrets.GIT_HUB_URL_1 }}
+          url2: ${{ secrets.GIT_HUB_URL_2 }}
         run: |
           echo "[DUMMY] Workflow is running"
           echo "[DUMMY] Event: ${{ github.event_name }}"
@@ -41,6 +42,7 @@ jobs:
           echo "[DUMMY] Selected environment: ${TARGET_ENVIRONMENT:-<not provided>}"
           echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
           echo "[DUMMY] URL: ${url:-<not set>}"
+          echo "[DUMMY] URL2: ${url2:-<not set>}"
 
   mandatory_ci:
     name: mandatory-ci
