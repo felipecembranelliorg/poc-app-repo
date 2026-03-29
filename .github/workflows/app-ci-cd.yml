@@ -33,6 +33,7 @@ jobs:
           GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
           TARGET_ENVIRONMENT: ${{ github.event.inputs.target_environment }}
           url: https://myapp-dev.example.com # Example URL, replace with actual if needed
+          url2: https://myapp-dev.example.com # Example URL, replace with actual if needed
         run: |
           echo "[DUMMY] Workflow is running"
           echo "[DUMMY] Event: ${{ github.event_name }}"
