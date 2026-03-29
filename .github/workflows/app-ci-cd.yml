@@ -1,18 +1,18 @@
 name: App CI CD
 
 on:
-  workflow_dispatch:
- 
-  pull_request:
-    branches:
-      - DEV
-      - STG
-      - main
   push:
     branches:
-      - DEV
-      - STG
       - main
+      - 'dev/**'
+      - 'release*'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'dev/**'
+      - 'release*'
+  workflow_dispatch:
 
 permissions:
   contents: read
