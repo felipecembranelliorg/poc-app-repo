@@ -13,6 +13,11 @@ on:
       - 'dev/**'
       - 'release*'
   workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Choose target environment'
+        required: true
+        type: environment
 
 permissions:
   contents: read
@@ -24,10 +29,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo workflow execution
+        env:
+          GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
+          TARGET_ENVIRONMENT: ${{ github.event.inputs.target_environment }}
         run: |
           echo "[DUMMY] Workflow is running"
           echo "[DUMMY] Event: ${{ github.event_name }}"
           echo "[DUMMY] Ref: ${{ github.ref }}"
+          echo "[DUMMY] Selected environment: ${TARGET_ENVIRONMENT:-<not provided>}"
+          echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
 
   mandatory_ci:
     name: mandatory-ci
