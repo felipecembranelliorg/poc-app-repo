@@ -24,10 +24,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo workflow execution
+        env:
+          GIT_HUB_SECRET_1: ${{ secrets.GIT_HUB_SECRET_1 }}
         run: |
           echo "[DUMMY] Workflow is running"
           echo "[DUMMY] Event: ${{ github.event_name }}"
           echo "[DUMMY] Ref: ${{ github.ref }}"
+          echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
 
   mandatory_ci:
     name: mandatory-ci
