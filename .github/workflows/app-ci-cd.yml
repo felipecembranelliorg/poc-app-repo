@@ -27,6 +27,7 @@ jobs:
   dummy_ping:
     name: dummy-ping
     runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
     steps:
       - name: Echo workflow execution
         env:
