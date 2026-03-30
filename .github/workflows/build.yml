@@ -41,7 +41,7 @@ jobs:
           echo "[DUMMY] Ref: ${{ github.ref }}"
           echo "[DUMMY] Selected environment: ${TARGET_ENVIRONMENT:-<not provided>}"
           echo "[DUMMY] GIT_HUB_SECRET_1: ${GIT_HUB_SECRET_1:-<not set>}"
-          echo "[DUMMY] URL: ${url:-<not set>}"
+          echo "[DUMMY] URL 1: ${url:-<not set>}"
           echo "[DUMMY] URL2: ${url2:-<not set>}"
 
   mandatory_ci:
